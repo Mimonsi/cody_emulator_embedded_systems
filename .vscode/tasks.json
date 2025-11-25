@@ -49,7 +49,7 @@
     {
       "label": "Run current file with cargo (release)",
       "type": "shell",
-      "command": "cargo run --release -- --uart1-source \"${file}\" codybasic.bin",
+      "command": "cargo run --release -- --fix-newlines --uart1-source \"${file}\" codybasic.bin",
       "problemMatcher": [],
       "presentation": {
         "echo": true,
