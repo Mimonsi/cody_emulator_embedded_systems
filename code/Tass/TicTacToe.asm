@@ -23,6 +23,14 @@ VIA_ACR   = VIA_BASE+$B
 VIA_PCR   = VIA_BASE+$C
 VIA_IFR   = VIA_BASE+$D
 
+VID_BLNK  = $D000               ; Video blanking status register
+VID_CNTL  = $D001               ; Video control register
+VID_COLR  = $D002               ; Video color register
+VID_BPTR  = $D003               ; Video base pointer register
+VID_SCRL  = $D004               ; Video scroll register
+VID_SCRC  = $D005               ; Video screen common colors register
+VID_SPRC  = $D006               ; Video sprite control register
+
 STRPTR    = $D0                 ; Pointer to string (2 bytes)
 SCRPTR    = $D2                 ; Pointer to screen (2 bytes)
 
@@ -32,6 +40,9 @@ KEYROW2   = $DC                 ; Keyboard row 2
 KEYROW3   = $DD                 ; Keyboard row 3
 KEYROW4   = $DE                 ; Keyboard row 4
 KEYROW5   = $DF                 ; Keyboard row 5
+
+BOARD      = $E1        ; 9 Bytes: BOARD+0 .. BOARD+8
+BOARD_SIZE = 9
 
 BOARD_X   = 26
 BOARD_Y   = 1
@@ -81,7 +92,7 @@ _PLAY       JSR GAMESTART       ; Start the game
 _PROG       
             BRA _LOOP
 
-WAIT_HALF_SECOND:
+WAIT:
     LDY #200        ; äußere Schleife
 W0: LDX #255
 W1: DEX
@@ -92,6 +103,15 @@ W1: DEX
 
 GAMESTART  ; Starts a new game of Tic Tac Toe
             JSR CLRSCRN ; Clear screen
+
+            ; Init board with 2 = empty
+            LDX #8          ; Index 8..0
+            LDA #2          ; 2 = empty
+_INIT_BOARD
+            STA BOARD,X
+            DEX
+            BPL _INIT_BOARD
+            ; Board is now initialized
 
             LDA #0
             STA PLAYER_TURN     ; Player 1 (X) starts first
@@ -111,12 +131,12 @@ GAMESTART  ; Starts a new game of Tic Tac Toe
             RTS
 
 _LOOP
-            JSR WAIT_HALF_SECOND ; Debounce delay
-            JSR WAIT_HALF_SECOND ; Debounce delay
-            JSR WAIT_HALF_SECOND ; Debounce delay
-            JSR WAIT_HALF_SECOND ; Debounce delay
-            JSR WAIT_HALF_SECOND ; Debounce delay
-            JSR WAIT_HALF_SECOND ; Debounce delay
+            JSR WAIT ; Debounce delay
+            JSR WAIT ; Debounce delay
+            JSR WAIT ; Debounce delay
+            JSR WAIT ; Debounce delay
+            JSR WAIT ; Debounce delay
+            JSR WAIT ; Debounce delay
 
             LDX #0 ; Player 1: Make your move
             LDY #1
@@ -262,7 +282,50 @@ _PRINT_BOARD
             JSR MOVESCRN
             LDX #MSG_BOARD_LINE ; Print board line 3
             JSR PUTMSG
+
+            ; Print player chars from board array
+
+            LDX #8          ; Index 8..0
+_PRINT_LOOP:
+            LDA BOARD,X
+            CMP #0
+            BEQ _PRINT_X
+            CMP #1
+            BEQ _PRINT_O
+            BRA _PRINT_EMPTY
+_PRINT_X:
+            LDX #MSG_P1CHAR
+            BRA _PRINT_DONE
+_PRINT_O:
+            LDX #MSG_P2CHAR
+            BRA _PRINT_DONE
+_PRINT_EMPTY:
+            LDX #2 ; Index of space in CHAR_TABLE
+            ; TODO ???
+
             RTS
+
+BORDER_BLACK
+    LDA VID_COLR
+    AND #%11110000 ; Set border color to black
+    STA VID_COLR
+    RTS
+
+BORDER_GREEN
+    LDA VID_COLR
+    AND #%11110000 ; Set border color to black
+    ORA #%00000101 ; Set border color to green
+    STA VID_COLR
+    RTS
+
+BLINK_GREEN
+    JSR BORDER_GREEN
+    JSR WAIT
+    JSR BORDER_BLACK
+    JSR WAIT
+    JMP BLINK_GREEN
+
+    RTS
 
 ;
 ; SHOWSCRN
@@ -489,6 +552,9 @@ STR_BOARD_LINE       .NULL "   |   |   "
 STR_BOARD_SEPARATOR  .NULL "---+---+---"
 STR_P1CHAR  .NULL "X"
 STR_P2CHAR  .NULL "O"
+
+CHAR_TABLE:
+    .BYTE "X","O"," "
 
 ;
 ; Low bytes of the string table addresses.
