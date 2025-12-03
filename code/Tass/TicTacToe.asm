@@ -62,28 +62,51 @@ MAIN        STZ PRGLEN          ; Clear program length
             
 _LOOP       JSR KEYSCAN         ; Scan the keyboard
 
+            LDA KEYROW5         ; Pressed P for play?
+            AND #%10000
+            BNE _PLAY
+
             LDA KEYROW0         ; Pressed Q for quit?
             AND #%00001
             BNE _QUIT
-            
-            LDA KEYROW1         ; Pressed L for load?
-            AND #%10000
-            BNE _LOAD
-            
-            LDA KEYROW5         ; Pressed P for program?
-            AND #%10000
-            BNE _PROG
             
             BRA _LOOP           ; Repeat main loop
             
 _QUIT       RTS                 ; Return to BASIC
             
-_LOAD       
+_PLAY       JSR GAMESTART       ; Start the game
             BRA _LOOP
             
 _PROG       
             BRA _LOOP
 
+
+GAMESTART  ; Starts a new game of Tic Tac Toe
+            JSR CLRSCRN ; Clear screen
+
+            LDX #0
+            LDY #0
+            JSR MOVESCRN
+            
+            LDX #MSG_TICTACTOE ; Print title
+            JSR PUTMSG
+
+            ; TODO: Game setup
+            
+            ; Game Loop -> _LOOP
+            JSR _LOOP
+            RTS
+
+
+_LOOP
+            LDX #0
+            LDY #1
+            JSR MOVESCRN
+
+            LDX #MSG_P1MOVE ; Player 1: Make your move
+            JSR PUTMSG
+
+            RTS
 
 ;
 ; SHOWSCRN
@@ -271,10 +294,10 @@ MSG_SUBTITLE  = 1
 MSG_MENUINSTRUCTIONS = 2
 MSG_MENUPLAY  = 3
 MSG_MENUQUIT  = 4
-MSG_WAITBINA  = 5
-MSG_WAITREPE  = 6
-MSG_RECVDATA  = 7
-MSG_PROGDATA  = 8
+MSG_P1MOVE  = 5
+MSG_P2MOVE  = 6
+MSG_P1WIN  = 7
+MSG_P2WIN  = 8
 MSG_VERIDATA  = 9
 MSG_VERIFYOK  = 10
 MSG_VERIFYBAD = 11
@@ -287,13 +310,13 @@ MSG_ERROR     = 14
 ;
 STR_TICTACTOE  .NULL "Tic Tac Toe"
 STR_SUBTITLE  .NULL "Welcome to Tic Tac Toe!"
-STR_MENUINSTRUCTIONS .NULL "Press Q-O keys to select position."
+STR_MENUINSTRUCTIONS .NULL "Press 1-9 keys to select position."
 STR_MENUPLAY  .NULL "(P)lay"
 STR_MENUQUIT  .NULL "(Q)uit"
-STR_WAITBINA  .NULL "Waiting for binary data..."
-STR_WAITREPE  .NULL "Waiting for repeat data to verify..."
-STR_RECVDATA  .NULL "Receiving data..."
-STR_PROGDATA  .NULL "Programming data..."
+STR_P1MOVE  .NULL "Player 1: Make your Move"
+STR_P2MOVE  .NULL "Player 2: Make your Move"
+STR_P1WIN  .NULL "Player 1 wins!"
+STR_P2WIN  .NULL "Player 2 wins!"
 STR_VERIDATA  .NULL "Verifying data..."
 STR_VERIFYOK  .NULL "Verify OK."
 STR_VERIFYBAD .NULL "Verify FAILED."
@@ -310,10 +333,10 @@ MSGS_L
   .BYTE <STR_MENUINSTRUCTIONS
   .BYTE <STR_MENUPLAY
   .BYTE <STR_MENUQUIT
-  .BYTE <STR_WAITBINA
-  .BYTE <STR_WAITREPE
-  .BYTE <STR_RECVDATA
-  .BYTE <STR_PROGDATA
+  .BYTE <STR_P1MOVE
+  .BYTE <STR_P2MOVE
+  .BYTE <STR_P1WIN
+  .BYTE <STR_P2WIN
   .BYTE <STR_VERIDATA
   .BYTE <STR_VERIFYOK
   .BYTE <STR_VERIFYBAD
@@ -330,10 +353,10 @@ MSGS_H
   .BYTE >STR_MENUINSTRUCTIONS
   .BYTE >STR_MENUPLAY
   .BYTE >STR_MENUQUIT
-  .BYTE >STR_WAITBINA
-  .BYTE >STR_WAITREPE
-  .BYTE >STR_RECVDATA
-  .BYTE >STR_PROGDATA
+  .BYTE >STR_P1MOVE
+  .BYTE >STR_P2MOVE
+  .BYTE >STR_P1WIN
+  .BYTE >STR_P2WIN
   .BYTE >STR_VERIDATA
   .BYTE >STR_VERIFYOK
   .BYTE >STR_VERIFYBAD
