@@ -33,7 +33,9 @@ KEYROW3   = $DD                 ; Keyboard row 3
 KEYROW4   = $DE                 ; Keyboard row 4
 KEYROW5   = $DF                 ; Keyboard row 5
 
-PRGLEN    = $D8                 ; Length of the program in memory
+BOARD_X   = #26
+BOARD_Y   = #1
+PLAYER_TURN = 0 ; 0 = Player 1 (X), 1 = Player 2 (O)
 
 ; Program header for Cody Basic's loader (needs to be first)
 
@@ -55,8 +57,7 @@ PRGLEN    = $D8                 ; Length of the program in memory
 ;            INX
 ;            BRA _LOOP
 
-MAIN        STZ PRGLEN          ; Clear program length
-            STZ PRGLEN+1
+MAIN        
             
             JSR SHOWSCRN
             
@@ -98,47 +99,154 @@ GAMESTART  ; Starts a new game of Tic Tac Toe
             JSR _LOOP
             RTS
 
+_LOOP
+            LDX #0 ; Player 1: Make your move
+            LDY #1
+            JSR MOVESCRN
+            LDX #MSG_P1MOVE 
+            JSR PUTMSG
+
+            JSR KEYSCAN         ; Scan the keyboard for number
+            LDA KEYROW0         ; Pressed Q=1?
+            AND #%00001
+            BNE _1
+
+            LDA KEYROW5         ; Pressed W=2?
+            AND #%00001
+            BNE _2
+
+            LDA KEYROW0         ; Pressed E=3?
+            AND #%00010
+            BNE _3
+
+            LDA KEYROW5         ; Pressed R=4?
+            AND #%00010
+            BNE _4
+
+            LDA KEYROW0         ; Pressed T=5?
+            AND #%00100
+            BNE _5
+
+            LDA KEYROW5         ; Pressed Y=6?
+            AND #%00100
+            BNE _6
+
+            LDA KEYROW0         ; Pressed U=7?
+            AND #%01000
+            BNE _7
+
+            LDA KEYROW5         ; Pressed I=8?
+            AND #%01000
+            BNE _8
+
+            LDA KEYROW0         ; Pressed O=9?
+            AND #%10000
+            BNE _9
+
+            
+            BRA _LOOP           ; Repeat main loop
+
+
+            ; TODO: Exit condition for game over
+            BRA _LOOP
+
+_1          LDX #1
+            LDY #1
+            JSR MOVESCRN
+            LDX #MSG_P1CHAR
+            JSR PUTMSG
+            JMP _LOOP
+
+_2          LDX #2
+            LDY #2
+            JSR MOVESCRN
+            LDX #MSG_P1CHAR
+            JSR PUTMSG
+            JMP _LOOP
+
+_3          LDX #3
+            LDY #3
+            JSR MOVESCRN
+            LDX #MSG_P1CHAR
+            JSR PUTMSG
+            JMP _LOOP
+
+_4          LDX #4
+            LDY #4
+            JSR MOVESCRN
+            LDX #MSG_P1CHAR
+            JSR PUTMSG
+            JMP _LOOP
+
+_5          LDX #5
+            LDY #5
+            JSR MOVESCRN
+            LDX #MSG_P1CHAR
+            JSR PUTMSG
+            JMP _LOOP
+
+_6          LDX #6
+            LDY #6
+            JSR MOVESCRN
+            LDX #MSG_P1CHAR
+            JSR PUTMSG
+            JMP _LOOP
+
+_7          LDX #7
+            LDY #7
+            JSR MOVESCRN
+            LDX #MSG_P1CHAR
+            JSR PUTMSG
+            JMP _LOOP
+
+_8          LDX #8
+            LDY #8
+            JSR MOVESCRN
+            LDX #MSG_P1CHAR
+            JSR PUTMSG
+            JMP _LOOP
+
+_9          LDX #9
+            LDY #9
+            JSR MOVESCRN
+            LDX #MSG_P1CHAR
+            JSR PUTMSG
+            JMP _LOOP
+
+
+
+
 _PRINT_BOARD
             ; Print Board Lines 1-3
-            LDX #24
-            LDY #0
+            LDX BOARD_X
+            LDY BOARD_Y
             JSR MOVESCRN
             LDX #MSG_BOARD_LINE ; Print board line 1
             JSR PUTMSG
 
-            LDX #24
-            LDY #1
+            LDX BOARD_X
+            LDY BOARD_Y+1
             JSR MOVESCRN
             LDX #MSG_BOARD_SEPARATOR ; Print board separator
             JSR PUTMSG
             
-            LDX #24
-            LDY #2
+            LDX BOARD_X
+            LDY BOARD_Y+2
             JSR MOVESCRN
             LDX #MSG_BOARD_LINE ; Print board line 2
             JSR PUTMSG
 
-            LDX #24
-            LDY #3
+            LDX BOARD_X
+            LDY BOARD_Y+3
             JSR MOVESCRN
             LDX #MSG_BOARD_SEPARATOR ; Print board separator
             JSR PUTMSG
             
-            LDX #24
-            LDY #4
+            LDX BOARD_X
+            LDY BOARD_Y+4
             JSR MOVESCRN
             LDX #MSG_BOARD_LINE ; Print board line 3
             JSR PUTMSG
-            RTS
-
-_LOOP
-            LDX #0
-            LDY #1
-            JSR MOVESCRN
-
-            LDX #MSG_P1MOVE ; Player 1: Make your move
-            JSR PUTMSG
-
             RTS
 
 ;
