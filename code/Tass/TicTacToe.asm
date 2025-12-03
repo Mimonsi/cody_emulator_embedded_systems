@@ -33,8 +33,8 @@ KEYROW3   = $DD                 ; Keyboard row 3
 KEYROW4   = $DE                 ; Keyboard row 4
 KEYROW5   = $DF                 ; Keyboard row 5
 
-BOARD_X   = #26
-BOARD_Y   = #1
+BOARD_X   = 26
+BOARD_Y   = 1
 PLAYER_TURN = $E0 ; 0 = Player 1 (X), 1 = Player 2 (O)
 
 ; Program header for Cody Basic's loader (needs to be first)
@@ -81,6 +81,14 @@ _PLAY       JSR GAMESTART       ; Start the game
 _PROG       
             BRA _LOOP
 
+WAIT_HALF_SECOND:
+    LDY #200        ; äußere Schleife
+W0: LDX #255
+W1: DEX
+    BNE W1          ; innere Schleife läuft 256
+    DEY
+    BNE W0          ; äußere Schleife: 200×
+    RTS
 
 GAMESTART  ; Starts a new game of Tic Tac Toe
             JSR CLRSCRN ; Clear screen
@@ -103,11 +111,24 @@ GAMESTART  ; Starts a new game of Tic Tac Toe
             RTS
 
 _LOOP
+            JSR WAIT_HALF_SECOND ; Debounce delay
+            JSR WAIT_HALF_SECOND ; Debounce delay
+            JSR WAIT_HALF_SECOND ; Debounce delay
+            JSR WAIT_HALF_SECOND ; Debounce delay
+            JSR WAIT_HALF_SECOND ; Debounce delay
+            JSR WAIT_HALF_SECOND ; Debounce delay
+
             LDX #0 ; Player 1: Make your move
             LDY #1
             JSR MOVESCRN
-            LDX #MSG_P1MOVE 
-            JSR PUTMSG
+
+
+            LDA PLAYER_TURN
+            BEQ _P1 ; If Player 1
+            LDX #MSG_P2MOVE ; Else code
+            BRA _DONE
+_P1         LDX #MSG_P1MOVE  ; Player 1 code
+_DONE       JSR PUTMSG
 
             JSR KEYSCAN         ; Scan the keyboard for number
             LDA KEYROW0         ; Pressed Q=1?
@@ -153,67 +174,58 @@ _LOOP
             ; TODO: Exit condition for game over
             BRA _LOOP
 
-_1          LDX #1
-            LDY #1
+_1          LDX #BOARD_X + 1
+            LDY #BOARD_Y + 0
             JSR MOVESCRN
-            LDX #MSG_P1CHAR
-            JSR PUTMSG
+            JSR PUTPLAYERCHAR
             JMP _LOOP
 
-_2          LDX #2
-            LDY #2
+_2          LDX #BOARD_X + 5
+            LDY #BOARD_Y + 0
             JSR MOVESCRN
-            LDX #MSG_P1CHAR
-            JSR PUTMSG
+            JSR PUTPLAYERCHAR
             JMP _LOOP
 
-_3          LDX #3
-            LDY #3
+_3          LDX #BOARD_X + 9
+            LDY #BOARD_Y + 0
             JSR MOVESCRN
-            LDX #MSG_P1CHAR
-            JSR PUTMSG
+            JSR PUTPLAYERCHAR
             JMP _LOOP
 
-_4          LDX #4
-            LDY #4
+_4          LDX #BOARD_X + 1
+            LDY #BOARD_Y + 2
             JSR MOVESCRN
-            LDX #MSG_P1CHAR
-            JSR PUTMSG
+            JSR PUTPLAYERCHAR
             JMP _LOOP
 
-_5          LDX #5
-            LDY #5
+_5          LDX #BOARD_X + 5
+            LDY #BOARD_Y + 2
             JSR MOVESCRN
-            LDX #MSG_P1CHAR
-            JSR PUTMSG
+            JSR PUTPLAYERCHAR
             JMP _LOOP
 
-_6          LDX #6
-            LDY #6
+_6          LDX #BOARD_X + 9
+            LDY #BOARD_Y + 2
             JSR MOVESCRN
-            LDX #MSG_P1CHAR
-            JSR PUTMSG
+            JSR PUTPLAYERCHAR
             JMP _LOOP
 
-_7          LDX #7
-            LDY #7
+_7          LDX #BOARD_X + 1
+            LDY #BOARD_Y + 4
             JSR MOVESCRN
-            LDX #MSG_P1CHAR
-            JSR PUTMSG
+            JSR PUTPLAYERCHAR
             JMP _LOOP
 
-_8          LDX #8
-            LDY #8
+_8          LDX #BOARD_X + 5
+            LDY #BOARD_Y + 4
             JSR MOVESCRN
-            LDX #MSG_P1CHAR
-            JSR PUTMSG
+            JSR PUTPLAYERCHAR
             JMP _LOOP
 
-_9          LDX #9
-            LDY #9
+_9          LDX #BOARD_X + 9
+            LDY #BOARD_Y + 4
             JSR MOVESCRN
-            LDX #MSG_P1CHAR
-            JSR PUTMSG
+            JSR PUTPLAYERCHAR
             JMP _LOOP
 
 
@@ -221,32 +233,32 @@ _9          LDX #9
 
 _PRINT_BOARD
             ; Print Board Lines 1-3
-            LDX BOARD_X
-            LDY BOARD_Y
+            LDX #BOARD_X
+            LDY #BOARD_Y
             JSR MOVESCRN
             LDX #MSG_BOARD_LINE ; Print board line 1
             JSR PUTMSG
 
-            LDX BOARD_X
-            LDY BOARD_Y+1
+            LDX #BOARD_X
+            LDY #BOARD_Y + 1
             JSR MOVESCRN
             LDX #MSG_BOARD_SEPARATOR ; Print board separator
             JSR PUTMSG
             
-            LDX BOARD_X
-            LDY BOARD_Y+2
+            LDX #BOARD_X
+            LDY #BOARD_Y + 2
             JSR MOVESCRN
             LDX #MSG_BOARD_LINE ; Print board line 2
             JSR PUTMSG
 
-            LDX BOARD_X
-            LDY BOARD_Y+3
+            LDX #BOARD_X
+            LDY #BOARD_Y + 3
             JSR MOVESCRN
             LDX #MSG_BOARD_SEPARATOR ; Print board separator
             JSR PUTMSG
             
-            LDX BOARD_X
-            LDY BOARD_Y+4
+            LDX #BOARD_X
+            LDY #BOARD_Y + 4
             JSR MOVESCRN
             LDX #MSG_BOARD_LINE ; Print board line 3
             JSR PUTMSG
@@ -388,6 +400,20 @@ _NEXT     DEX                     ; Next X
           
           RTS
 
+
+PUTPLAYERCHAR ; Puts the character for the current player (X or O) on the screen.
+            LDA PLAYER_TURN
+            BEQ _P1
+            LDX #MSG_P2CHAR
+            BRA _DONE
+_P1         LDX #MSG_P1CHAR
+_DONE       JSR PUTMSG
+
+            LDA PLAYER_TURN ; Switch player turn
+            EOR #1
+            STA PLAYER_TURN
+
+            RTS
 
 ;
 ; PUTMSG
