@@ -92,11 +92,44 @@ GAMESTART  ; Starts a new game of Tic Tac Toe
             JSR PUTMSG
 
             ; TODO: Game setup
-            
+            JSR _PRINT_BOARD
+
             ; Game Loop -> _LOOP
             JSR _LOOP
             RTS
 
+_PRINT_BOARD
+            ; Print Board Lines 1-3
+            LDX #24
+            LDY #0
+            JSR MOVESCRN
+            LDX #MSG_BOARD_LINE ; Print board line 1
+            JSR PUTMSG
+
+            LDX #24
+            LDY #1
+            JSR MOVESCRN
+            LDX #MSG_BOARD_SEPARATOR ; Print board separator
+            JSR PUTMSG
+            
+            LDX #24
+            LDY #2
+            JSR MOVESCRN
+            LDX #MSG_BOARD_LINE ; Print board line 2
+            JSR PUTMSG
+
+            LDX #24
+            LDY #3
+            JSR MOVESCRN
+            LDX #MSG_BOARD_SEPARATOR ; Print board separator
+            JSR PUTMSG
+            
+            LDX #24
+            LDY #4
+            JSR MOVESCRN
+            LDX #MSG_BOARD_LINE ; Print board line 3
+            JSR PUTMSG
+            RTS
 
 _LOOP
             LDX #0
@@ -298,12 +331,10 @@ MSG_P1MOVE  = 5
 MSG_P2MOVE  = 6
 MSG_P1WIN  = 7
 MSG_P2WIN  = 8
-MSG_VERIDATA  = 9
-MSG_VERIFYOK  = 10
-MSG_VERIFYBAD = 11
-MSG_LENGTH    = 12
-MSG_CLEAR     = 13
-MSG_ERROR     = 14
+MSG_BOARD_LINE = 9
+MSG_BOARD_SEPARATOR = 10
+MSG_P1CHAR = 11
+MSG_P2CHAR = 12
 
 ;
 ; The strings displayed by the program.
@@ -317,12 +348,10 @@ STR_P1MOVE  .NULL "Player 1: Make your Move"
 STR_P2MOVE  .NULL "Player 2: Make your Move"
 STR_P1WIN  .NULL "Player 1 wins!"
 STR_P2WIN  .NULL "Player 2 wins!"
-STR_VERIDATA  .NULL "Verifying data..."
-STR_VERIFYOK  .NULL "Verify OK."
-STR_VERIFYBAD .NULL "Verify FAILED."
-STR_LENGTH    .NULL "Length: $"
-STR_CLEAR     .NULL "                                    "
-STR_ERROR     .NULL "ERROR"
+STR_BOARD_LINE       .NULL "   |   |   "
+STR_BOARD_SEPARATOR  .NULL "---+---+---"
+STR_P1CHAR  .NULL "X"
+STR_P2CHAR  .NULL "O"
 
 ;
 ; Low bytes of the string table addresses.
@@ -337,12 +366,10 @@ MSGS_L
   .BYTE <STR_P2MOVE
   .BYTE <STR_P1WIN
   .BYTE <STR_P2WIN
-  .BYTE <STR_VERIDATA
-  .BYTE <STR_VERIFYOK
-  .BYTE <STR_VERIFYBAD
-  .BYTE <STR_LENGTH
-  .BYTE <STR_CLEAR
-  .BYTE <STR_ERROR
+  .BYTE <STR_BOARD_LINE
+  .BYTE <STR_BOARD_SEPARATOR
+  .BYTE <STR_P1CHAR
+  .BYTE <STR_P2CHAR
 
 ;
 ; High bytes of the string table addresses.
@@ -357,12 +384,10 @@ MSGS_H
   .BYTE >STR_P2MOVE
   .BYTE >STR_P1WIN
   .BYTE >STR_P2WIN
-  .BYTE >STR_VERIDATA
-  .BYTE >STR_VERIFYOK
-  .BYTE >STR_VERIFYBAD
-  .BYTE >STR_LENGTH
-  .BYTE >STR_CLEAR
-  .BYTE >STR_ERROR
+  .BYTE >STR_BOARD_LINE
+  .BYTE >STR_BOARD_SEPARATOR
+  .BYTE >STR_P1CHAR
+  .BYTE >STR_P2CHAR
 
 LAST                            ; End of the entire program
 
