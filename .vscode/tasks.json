@@ -47,7 +47,7 @@
       }
     },
     {
-      "label": "Run current file with cargo (release)",
+      "label": "Run current BASIC file",
       "type": "shell",
       "command": "cargo run --release -- --fix-newlines --uart1-source \"${file}\" codybasic.bin",
       "problemMatcher": [],
@@ -71,6 +71,7 @@
         "kind": "build",
         "isDefault": true
       }
-    }
+    },
+
   ]
 }
