@@ -95,3 +95,4 @@ CYCLE       PHA                 ; Preserve registers
 LAST                            ; End of the entire program
 
 .ENDLOGICAL
+
