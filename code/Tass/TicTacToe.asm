@@ -35,7 +35,7 @@ KEYROW5   = $DF                 ; Keyboard row 5
 
 BOARD_X   = #26
 BOARD_Y   = #1
-PLAYER_TURN = 0 ; 0 = Player 1 (X), 1 = Player 2 (O)
+PLAYER_TURN = $E0 ; 0 = Player 1 (X), 1 = Player 2 (O)
 
 ; Program header for Cody Basic's loader (needs to be first)
 
@@ -84,6 +84,9 @@ _PROG
 
 GAMESTART  ; Starts a new game of Tic Tac Toe
             JSR CLRSCRN ; Clear screen
+
+            LDA #0
+            STA PLAYER_TURN     ; Player 1 (X) starts first
 
             LDX #0
             LDY #0
