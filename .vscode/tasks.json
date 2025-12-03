@@ -68,10 +68,64 @@
         }
       },
       "group": {
-        "kind": "build",
-        "isDefault": true
+        "kind": "build"
       }
     },
-
+    {
+      "label": "Assemble current ASM (64tass)",
+      "type": "shell",
+      "command": "64tass --mw65c02 --nostart -o out/${fileBasenameNoExtension}.bin \"${file}\"",
+      "problemMatcher": [],
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      },
+      "options": {
+        "cwd": "${workspaceFolder}",
+        "shell": {
+          "executable": "powershell.exe",
+          "args": [
+            "-NoProfile",
+            "-Command"
+          ]
+        }
+      }
+    },
+    {
+      "label": "Run current ASM in emulator",
+      "type": "shell",
+      "command": "cargo run --release -- --uart1-source out/${fileBasenameNoExtension}.bin codybasic.bin",
+      "problemMatcher": [],
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      },
+      "options": {
+        "cwd": "${workspaceFolder}",
+        "shell": {
+          "executable": "powershell.exe",
+          "args": [
+            "-NoProfile",
+            "-Command"
+          ]
+        }
+      }
+    },
+    {
+      "label": "Build+Run current ASM (64tass + cargo)",
+      "dependsOn": [
+        "Assemble current ASM (64tass)",
+        "Run current ASM in emulator"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": []
+    }
   ]
 }
