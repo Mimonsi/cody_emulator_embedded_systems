@@ -1,0 +1,5 @@
+9 REM Page 249
+10 M$ = "HELLO "
+20 N$ = "WORLD!"
+30 PRINT M$,N$
+
