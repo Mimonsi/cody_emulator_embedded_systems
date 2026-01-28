@@ -1,7 +1,7 @@
 use clap::Parser;
 use clap_num::maybe_hex;
 use cody_emulator::assembler::disassemble;
-use cody_emulator::device::vid;
+use cody_emulator::frontend;
 use std::env;
 use std::path::PathBuf;
 
@@ -45,6 +45,10 @@ struct Cli {
     #[arg(long, default_value_t = false)]
     physical_keyboard: bool,
 
+    /// Run the cpu as fast as possible.
+    #[arg(long, default_value_t = false)]
+    fast: bool,
+
     /// Each time this option is added increases the default logging level
     #[arg(short, long, action = clap::ArgAction::Count)]
     verbose: u8,
@@ -67,7 +71,7 @@ pub fn main() {
     }
     env_logger::init();
 
-    vid::start(
+    frontend::start(
         &cli.file,
         cli.as_cartridge,
         cli.load_address,
@@ -77,6 +81,7 @@ pub fn main() {
         cli.uart1_source.as_deref(),
         cli.fix_newlines,
         cli.physical_keyboard,
+        cli.fast,
     );
 }
 
