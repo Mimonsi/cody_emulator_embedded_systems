@@ -1,9 +1,0 @@
-8  REM Page 317
-9  REM 57344/$E000 = cody basic ROM (char set)
-10 INPUT S$
-20 C=ASC(S$)
-30 A=57344+C*8
-40 FOR I=0 TO 7
-50 PRINT PEEK(A+I)
-60 NEXT
-

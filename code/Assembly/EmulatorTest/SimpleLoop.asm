@@ -2,6 +2,7 @@
 
 ; Program header for Cody Basic's loader (needs to be first)
 
+ADDR    = $3000                 ; The actual loading address of the program
 .WORD ADDR                      ; Starting address (just like KIM-1, Commodore, etc.)
 .WORD (ADDR + LAST - MAIN - 1)  ; Ending address (so we know when we're done loading)
 

@@ -1,6 +1,0 @@
-9 REM Page 252
-10 PRINT "A"
-20 GOTO 40
-30 PRINT "B"
-40 PRINT "Z"
-
